@@ -12,6 +12,10 @@ import java.time.LocalDate;
 @Table(name = "visits")
 public class Visit {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "date")
     private LocalDate date;
 
