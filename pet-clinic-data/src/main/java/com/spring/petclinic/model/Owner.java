@@ -1,17 +1,33 @@
 package com.spring.petclinic.model;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
 @Setter
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "owners")
 public class Owner extends Person {
+
+    @Builder
+    public Owner(Long id, String firstName, String lastName, String address, String city,
+                 String telephone, Set<Pet> pets) {
+        super(id, firstName, lastName);
+        this.address = address;
+        this.city = city;
+        this.telephone = telephone;
+
+        if (pets != null) {
+            this.pets = pets;
+        }
+    }
 
     @Column(name = "address")
     private String address;
@@ -27,4 +43,21 @@ public class Owner extends Person {
             mappedBy = "owner")
     private Set<Pet> pets = new HashSet<>();
 
+    Owner(String firstName, String lastName) {
+        super(firstName, lastName);
+    }
+
+    public Pet getPet(String name, boolean ignoreNew) {
+        name = name.toLowerCase();
+        for (Pet pet : pets) {
+            if (!ignoreNew || !pet.isNew()) {
+                String compName = pet.getName();
+                compName = compName.toLowerCase();
+                if (compName.equals(name)) {
+                    return pet;
+                }
+            }
+        }
+        return null;
+    }
 }
